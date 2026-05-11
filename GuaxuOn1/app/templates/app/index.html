@@ -1,0 +1,232 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<style>
+    /* Estilos base do Portal */
+    .hero-section {
+        padding: 60px 0;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-weight: 300;
+        color: #555;
+        font-size: 2.2rem;
+        margin-bottom: 30px;
+    }
+
+    .hero-title strong {
+        font-weight: 700;
+        color: var(--azul-prefeitura);
+        text-transform: uppercase;
+    }
+
+    /* Barra de Busca */
+    .search-container {
+        max-width: 700px;
+        margin: 0 auto 50px;
+        position: relative;
+    }
+
+    .search-input {
+        height: 60px;
+        border-radius: 30px;
+        padding-left: 30px;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        font-size: 1.1rem;
+    }
+
+    .btn-search {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        height: 40px;
+        border-radius: 20px;
+        padding: 0 25px;
+        background-color: var(--azul-prefeitura);
+        color: white;
+        border: none;
+    }
+
+    /* Grid de Ícones Otimizado */
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+
+    .service-item {
+        background: white;
+        border-radius: 12px;
+        padding: 30px 20px;
+        text-align: center;
+        text-decoration: none;
+        color: #666;
+        transition: all 0.3s ease;
+        border-bottom: 4px solid transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 180px;
+    }
+
+    .service-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        border-bottom: 4px solid var(--azul-prefeitura);
+        color: var(--azul-prefeitura);
+    }
+
+    .service-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #888;
+        transition: color 0.3s ease;
+    }
+
+    .service-item:hover .service-icon {
+        color: var(--azul-prefeitura);
+    }
+
+    .service-label {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .service-item.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* PADRONIZAÇÃO DO CARROSSEL (Z e Y) */
+    .carousel-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 50px;
+    }
+
+    .carousel-item img {
+        width: 100%;
+        height: 400px; /* Define a altura fixa (Eixo Y) */
+        object-fit: cover; /* Garante que a imagem preencha o espaço sem esticar (Eixo Z) */
+        object-position: center;
+    }
+
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.5); /* Fundo escuro para leitura do texto */
+        border-radius: 10px;
+        padding: 20px;
+        bottom: 30px;
+    }
+</style>
+
+<div class="hero-section">
+    <h1 class="hero-title">O QUE VOCÊ <strong>PRECISA?</strong></h1>
+    
+    <div class="search-container">
+        <input type="text" class="form-control search-input" placeholder="O que você está procurando?">
+        <button class="btn-search">BUSCAR</button>
+    </div>
+
+    <div class="service-grid">
+        
+        <a href="{% url 'coleta_list' %}" class="service-item shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-truck-pickup"></i>
+            </div>
+            <div class="service-label">Coleta de Lixo</div>
+        </a>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div class="service-label">IPTU 2026</div>
+        </div>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="service-label">Ouvidoria</div>
+        </div>
+
+        <a href="#" class="service-item shadow-sm">
+            <div class="service-icon text-danger">
+                <i class="fas fa-hand-holding-medical"></i>
+            </div>
+            <div class="service-label">Saúde</div>
+        </a>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="service-label">Educação</div>
+        </div>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-ellipsis-h"></i>
+            </div>
+            <div class="service-label">Mais Serviços</div>
+        </div>
+    </div>
+
+    <div id="prefeituraCarousel" class="carousel slide carousel-container" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://via.placeholder.com/1200x400/004a8d/ffffff?text=Banner+Coleta+de+Lixo" class="d-block w-100" alt="Coleta">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Cronograma de Coleta</h5>
+                    <p>Confira os dias e horários que o caminhão passa na sua rua.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://via.placeholder.com/1200x400/cc0000/ffffff?text=Campanha+de+Vacinacao" class="d-block w-100" alt="Saúde">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Saúde em Dia</h5>
+                    <p>Veja os locais de vacinação e atendimento médico nesta semana.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://via.placeholder.com/1200x400/555555/ffffff?text=IPTU+2026" class="d-block w-100" alt="Impostos">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>IPTU 2026</h5>
+                    <p>Acesse sua guia e contribua com o crescimento de Guaxupé.</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#prefeituraCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#prefeituraCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-12">
+        <h4 class="fw-bold mb-4" style="color: var(--azul-prefeitura);">VEJA O STATUS DA CIDADE</h4>
+        <div class="card bg-primary text-white border-0 shadow-sm p-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x me-3"></i>
+                <div>
+                    <h5 class="mb-1">Hoje é {{ dia_atual }}</h5>
+                    <p class="mb-0">A coleta de lixo está operando normalmente em todos os bairros de Guaxupé.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

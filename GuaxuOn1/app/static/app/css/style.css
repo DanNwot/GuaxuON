@@ -1,0 +1,78 @@
+:root {
+    --primary-blue: #004a8d;
+    --accent-blue: #007bff;
+    --bg-gray: #f4f7f6;
+    --text-dark: #2d3436;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-gray);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* Navbar Premium */
+.navbar {
+    background: var(--primary-blue) !important;
+    padding: 1rem 0;
+    transition: all var(--transition-speed);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Cards com efeito de elevação */
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+}
+
+/* Botões Modernos */
+.btn-rounded {
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-weight: 600;
+    transition: all var(--transition-speed);
+}
+
+.btn-info {
+    background-color: var(--primary-blue);
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: var(--accent-blue);
+    transform: scale(1.05);
+}
+
+/* Tabelas Elegantes */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+}
+
+.table thead {
+    background-color: var(--primary-blue);
+    color: white;
+}
+
+/* Badge de status customizada */
+.badge-custom {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
