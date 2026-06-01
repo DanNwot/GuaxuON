@@ -1,0 +1,53 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Meu Perfil - GuaxuOn{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header text-white py-3 text-center" style="background-color: var(--azul-prefeitura);">
+                <i class="fas fa-user-circle fa-3x mb-2"></i>
+                <h4 class="mb-0">Dados do Usuário</h4>
+            </div>
+            
+            <div class="card-body p-4">
+                <div class="mb-3 border-bottom pb-2">
+                    <label class="text-muted small d-block fw-bold text-uppercase">Nome de Usuário (Login)</label>
+                    <span class="fs-5 text-dark fw-semibold">{{ usuario.username }}</span>
+                </div>
+
+                <div class="mb-3 border-bottom pb-2">
+                    <label class="text-muted small d-block fw-bold text-uppercase">Nome Completo</label>
+                    <span class="fs-5 text-dark">
+                        {{ usuario.get_full_name|default:"Não informado" }}
+                    </span>
+                </div>
+
+                <div class="mb-3 border-bottom pb-2">
+                    <label class="text-muted small d-block fw-bold text-uppercase">E-mail Cadastrado</label>
+                    <span class="fs-5 text-dark">
+                        {{ usuario.email|default:"Não cadastrado" }}
+                    </span>
+                </div>
+
+                <div class="mb-3 pb-1">
+                    <label class="text-muted small d-block fw-bold text-uppercase">Membro Desde</label>
+                    <span class="text-secondary">
+                        {{ usuario.date_joined|date:"d \d\e F \d\e Y" }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="card-footer bg-light py-3 d-flex justify-content-between">
+                <a href="{% url 'index' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar ao Início
+                </a>
+                <span class="badge d-flex align-items-center px-3 rounded-pill bg-success-subtle text-success border border-success-subtle">
+                    <i class="fas fa-check-circle me-1"></i> Perfil Ativo
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,78 +1,199 @@
+/* --- VARIÁVEIS GLOBAIS --- */
 :root {
-    --primary-blue: #004a8d;
-    --accent-blue: #007bff;
-    --bg-gray: #f4f7f6;
-    --text-dark: #2d3436;
-    --transition-speed: 0.3s;
+    --azul-prefeitura: #004a8d;
+    --azul-hover: #003366;
+    --cinza-fundo: #f4f7f6;
+    --branco-puro: #ffffff;
+    --danger-saude: #dc3545;
+    --shadow-suave: 0 8px 30px rgba(0,0,0,0.05);
+    --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* --- CONFIGURAÇÕES GERAIS --- */
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--bg-gray);
-    color: var(--text-dark);
-    line-height: 1.6;
+    background-color: var(--cinza-fundo);
+    font-family: 'Inter', sans-serif;
+    color: #444;
+    overflow-x: hidden;
 }
 
-/* Navbar Premium */
-.navbar {
-    background: var(--primary-blue) !important;
-    padding: 1rem 0;
-    transition: all var(--transition-speed);
+/* --- HERO SECTION & BUSCA --- */
+.hero-section {
+    padding: 60px 0;
+    text-align: center;
 }
 
-.navbar-brand {
-    font-size: 1.5rem;
-    letter-spacing: 1px;
+.hero-title {
+    font-weight: 300;
+    color: #555;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+}
+
+.hero-title strong {
+    font-weight: 700;
+    color: var(--azul-prefeitura);
     text-transform: uppercase;
 }
 
-/* Cards com efeito de elevação */
-.card {
-    border: none;
-    border-radius: 15px;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-    overflow: hidden;
+.search-container {
+    max-width: 700px;
+    margin: 0 auto 50px;
+    position: relative;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+.search-input {
+    height: 60px;
+    border-radius: 30px;
+    padding-left: 30px;
+    border: 2px solid transparent !important;
+    background: white !important;
+    box-shadow: var(--shadow-suave);
+    font-size: 1.1rem;
+    transition: var(--transition);
 }
 
-/* Botões Modernos */
-.btn-rounded {
-    border-radius: 50px;
-    padding: 10px 25px;
-    font-weight: 600;
-    transition: all var(--transition-speed);
+.search-input:focus {
+    border-color: var(--azul-prefeitura) !important;
+    box-shadow: 0 0 0 4px rgba(0,74,141,0.1) !important;
+    transform: scale(1.01);
+    outline: none;
 }
 
-.btn-info {
-    background-color: var(--primary-blue);
-    border: none;
-}
-
-.btn-info:hover {
-    background-color: var(--accent-blue);
-    transform: scale(1.05);
-}
-
-/* Tabelas Elegantes */
-.table {
-    border-radius: 10px;
-    overflow: hidden;
-    background: white;
-}
-
-.table thead {
-    background-color: var(--primary-blue);
+.btn-search {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    height: 40px;
+    border-radius: 20px;
+    padding: 0 25px;
+    background-color: var(--azul-prefeitura);
     color: white;
+    border: none;
+    font-weight: 600;
+    transition: var(--transition);
 }
 
-/* Badge de status customizada */
-.badge-custom {
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.85rem;
+.btn-search:hover {
+    background-color: var(--azul-hover);
+    transform: translateY(-1px);
+}
+
+/* --- GRID DE SERVIÇOS --- */
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+.service-item {
+    background: var(--branco-puro);
+    border: 1px solid rgba(0,0,0,0.03);
+    border-radius: 16px;
+    padding: 30px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #666;
+    transition: var(--transition);
+    border-bottom: 4px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+}
+
+.service-item:hover:not(.disabled) {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,74,141,0.1);
+    border-color: var(--azul-prefeitura);
+    color: var(--azul-prefeitura);
+}
+
+/* Ícones com Gradiente (Corrigido para evitar avisos) */
+.service-icon {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    display: inline-block;
+    
+    background: linear-gradient(135deg, #666 0%, #bbb 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    transition: var(--transition);
+}
+
+.service-item:hover:not(.disabled) .service-icon {
+    background: linear-gradient(135deg, var(--azul-prefeitura) 0%, #007bff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Ícone de Saúde (Específico) */
+.service-item:hover .text-danger {
+    background: linear-gradient(135deg, var(--danger-saude) 0%, #ff6b6b 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.service-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.service-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+/* --- CARROSSEL PADRONIZADO --- */
+.carousel-container {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-suave);
+    margin-bottom: 50px;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 400px; 
+    object-fit: cover;
+    object-position: center;
+}
+
+.carousel-caption {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(0, 74, 141, 0.75);
+    border-left: 5px solid white;
+    border-radius: 10px;
+    padding: 25px;
+    text-align: left;
+    max-width: 80%;
+    left: 5%;
+}
+
+/* --- STATUS DA CIDADE --- */
+.status-card {
+    transition: var(--transition);
+}
+
+.status-card:hover {
+    transform: scale(1.01);
+}
+
+/* --- ANIMAÇÃO DE ENTRADA --- */
+.animate-in {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }

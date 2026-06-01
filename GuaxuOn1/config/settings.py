@@ -34,8 +34,8 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Mapeia a pasta de templates dentro do app
-        'DIRS': [BASE_DIR / 'app' / 'templates'],
+        # CERTIFIQUE-SE DE QUE A LINHA ABAIXO ESTÁ EXATAMENTE ASSIM:
+        'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -53,8 +53,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Banco de Dados
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'GuaxuON',
+        'USER': 'postgres',
+        'PASSWORD': '123456',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -75,13 +79,21 @@ USE_TZ = True
 # --- ARQUIVOS ESTÁTICOS (CSS, JS, IMAGENS) ---
 STATIC_URL = 'static/'
 
-# Local onde o Django busca os arquivos durante o desenvolvimento
 STATICFILES_DIRS = [
     BASE_DIR / 'app' / 'static',
 ]
 
-# Local onde os arquivos serão coletados para produção (opcional por enquanto)
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Tipo de campo de ID padrão
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# --- CONFIGURAÇÕES DO SISTEMA DE LOGIN / LOGOUT ---
+# Onde o usuário cai após logar com sucesso (Página Inicial)
+LOGIN_REDIRECT_URL = '/'  
+
+# Onde o usuário cai após fazer logout (Redireciona para a tela de Login usando o nome da rota)
+LOGOUT_REDIRECT_URL = 'login'
+
+# Rota para onde o Django barra usuários não logados que tentam acessar páginas restritas
+LOGIN_URL = 'login'
+
+LOGIN_REDIRECT_URL = 'index'
+LOGIN_URL = 'login'
