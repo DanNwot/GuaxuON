@@ -1,0 +1,58 @@
+{% extends 'app/base.html' %} {% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-4 mb-4 shadow-sm border-0 bg-white">
+            <h4 class="text-dark fw-bold mb-3" style="color: var(--azul-prefeitura) !important;">Filtrar por Bairro</h4>
+            
+            <form method="GET" action="{% url 'coleta_list' %}">
+                <select name="bairro" class="form-select border-secondary mb-3">
+                    <option value="">Todos os Bairros</option>
+                    {% for b in bairros %}
+                        <option value="{{ b.id }}" {% if bairro_selecionado == b.id or bairro_selecionado|stringformat:"s" == b.id|stringformat:"s" %}selected{% endif %}>
+                            {{ b.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn text-white w-100 fw-semibold" style="background-color: var(--azul-prefeitura);">
+                    <i class="fas fa-search me-1"></i> Buscar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h2 class="mb-4 text-dark fw-bold">Cronograma de Coleta</h2>
+        <div class="table-responsive shadow-sm rounded-3">
+            <table class="table table-striped table-hover align-middle mb-0 bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-3">Bairro</th>
+                        <th>Rua / Região</th> <th>Dia da Semana</th>
+                        <th>Horário</th>
+                        <th class="pe-3">Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for agenda in agendas %}
+                    <tr>
+                        <td class="fw-semibold ps-3 text-dark">{{ agenda.bairro.nome }}</td>
+                        <td class="text-dark fw-normal">{{ agenda.rua }}</td> <td class="text-secondary">{{ agenda.dia_semana }}</td>
+                        <td class="text-dark fw-medium">{{ agenda.horario|time:"H:i" }}</td>
+                        <td class="pe-3">
+                            <span class="badge px-3 py-2 rounded-pill" style="background-color: {{ agenda.tipo.cor_identificacao|default:'#888888' }}; font-size: 0.8rem;">
+                                {{ agenda.tipo.nome }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4"> <i class="fas fa-info-circle me-1"></i> Nenhum horário de coleta encontrado para esta seleção.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

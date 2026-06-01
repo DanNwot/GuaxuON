@@ -1,0 +1,272 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Estilos base do Portal */
+    .hero-section {
+        padding: 60px 0;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-weight: 300;
+        color: #555;
+        font-size: 2.2rem;
+        margin-bottom: 30px;
+    }
+
+    .hero-title strong {
+        font-weight: 700;
+        color: var(--azul-prefeitura);
+        text-transform: uppercase;
+    }
+
+    /* Barra de Busca */
+    .search-container {
+        max-width: 700px;
+        margin: 0 auto 50px;
+        position: relative;
+    }
+
+    .search-input {
+        height: 60px;
+        border-radius: 30px;
+        padding-left: 30px;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        font-size: 1.1rem;
+    }
+
+    .btn-search {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        height: 40px;
+        border-radius: 20px;
+        padding: 0 25px;
+        background-color: var(--azul-prefeitura);
+        color: white;
+        border: none;
+    }
+
+    /* Grid de Ícones Otimizado */
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+
+    .service-item {
+        background: white;
+        border-radius: 12px;
+        padding: 30px 20px;
+        text-align: center;
+        text-decoration: none;
+        color: #666;
+        transition: all 0.3s ease;
+        border-bottom: 4px solid transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 180px;
+    }
+
+    .service-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        border-bottom: 4px solid var(--azul-prefeitura);
+        color: var(--azul-prefeitura);
+    }
+
+    .service-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #888;
+        transition: color 0.3s ease;
+    }
+
+    .service-item:hover .service-icon {
+        color: var(--azul-prefeitura);
+    }
+
+    .service-label {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .service-item.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* PADRONIZAÇÃO DO CARROSSEL (Z e Y) */
+    .carousel-container {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 50px;
+    }
+
+    .carousel-item img {
+        width: 100%;
+        height: 400px; /* Define a altura fixa (Eixo Y) */
+        object-fit: cover; /* Garante que a imagem preencha o espaço sem esticar (Eixo Z) */
+        object-position: center;
+    }
+
+    .carousel-caption {
+        background: rgba(0, 0, 0, 0.6); /* Fundo escuro para leitura do texto */
+        border-radius: 10px;
+        padding: 20px;
+        bottom: 30px;
+    }
+</style>
+
+<div class="hero-section">
+    <h1 class="hero-title">O QUE VOCÊ <strong>PRECISA?</strong></h1>
+    
+    <div class="search-container">
+        <input type="text" class="form-control search-input" placeholder="O que você está procurando?">
+        <button class="btn-search">BUSCAR</button>
+    </div>
+
+    <div class="service-grid">
+        <a href="{% url 'coleta_list' %}" class="service-item shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-truck-pickup"></i>
+            </div>
+            <div class="service-label">Coleta de Lixo</div>
+        </a>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-file-invoice"></i>
+            </div>
+            <div class="service-label">IPTU 2026</div>
+        </div>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="service-label">Ouvidoria</div>
+        </div>
+
+        <a href="#" class="service-item shadow-sm">
+            <div class="service-icon text-danger">
+                <i class="fas fa-hand-holding-medical"></i>
+            </div>
+            <div class="service-label">Saúde</div>
+        </a>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="service-label">Educação</div>
+        </div>
+
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
+                <i class="fas fa-ellipsis-h"></i>
+            </div>
+            <div class="service-label">Mais Serviços</div>
+        </div>
+    </div>
+
+    <div id="prefeituraCarousel" class="carousel slide carousel-container" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="2"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="3"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="4"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="5"></button>
+            <button type="button" data-bs-target="#prefeituraCarousel" data-bs-slide-to="6"></button>
+        </div>
+        
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="5000">
+                <img src="{% static 'app/images/01.jpg' %}" class="d-block w-100" alt="Cronograma de Coleta Ordinária">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Cronograma de Coleta Ordinária</h5>
+                    <p>Consulte os dias e horários em que os caminhões de resíduos orgânicos passam no seu bairro.</p>
+                </div>
+            </div>
+            
+            <div class="carousel-item" data-bs-interval="5000">
+                <img src="{% static 'app/images/02.jpg' %}" class="d-block w-100" alt="Coleta Seletiva e Reciclagem">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Coleta Seletiva e Reciclagem</h5>
+                    <p>Separe papéis, plásticos, metais e vidros. Contribua com as cooperativas de reciclagem da nossa cidade.</p>
+                </div>
+            </div>
+            
+            <div class="carousel-item" data-bs-interval="5000">
+                <img src="{% static 'app/images/03.jpg' %}" class="d-block w-100" alt="Pontos de Entrega Voluntária">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Pontos de Entrega Voluntária (PEVs)</h5>
+                    <p>Saiba onde descartar eletrodomésticos, pilhas e computadores antigos sem agredir o meio ambiente.</p>
+                </div>
+            </div>
+
+            <div class="carousel-item" data-bs-interval="5000">
+                <img src="{% static 'app/images/04.jpg' %}" class="d-block w-100" alt="Combate à Dengue e Vetores">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Combate à Dengue e Vetores</h5>
+                    <p>Não acumule água e mantenha quintais limpos. O descarte correto do lixo evita a proliferação de focos.</p>
+                </div>
+            </div>
+
+            <div class="carousel-item" data-bs-interval="5000">
+                <img src="{% static 'app/images/05.jpg' %}" class="d-block w-100" alt="Zelo pelo Espaço Público">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Zelo pelo Espaço Público</h5>
+                    <p>Coloque os sacos de lixo na calçada apenas próximo ao horário estimado de passagem do caminhão.</p>
+                </div>
+            </div>
+
+            <div class="carousel-item" data-bs-interval="5000">
+                <img src="{% static 'app/images/06.jpg' %}" class="d-block w-100" alt="Canal Direto da Ouvidoria">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Canal Direto da Ouvidoria</h5>
+                    <p>Solicite serviços especiais de capina, retirada de entulho ou relate irregularidades nas vias urbanas.</p>
+                </div>
+            </div>
+
+            <div class="carousel-item" data-bs-interval="5000">
+                <img src="{% static 'app/images/07.jpg' %}" class="d-block w-100" alt="Cidade Limpa, Dever de Todos">
+                <div class="carousel-caption d-none d-md-block text-start">
+                    <h5>Cidade Limpa, Dever de Todos</h5>
+                    <p>Pequenas ações diárias na separação e destinação do lixo promovem a saúde pública em toda Guaxupé.</p>
+                </div>
+            </div>
+        </div>
+        
+        <button class="carousel-control-prev" type="button" data-bs-target="#prefeituraCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#prefeituraCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-12">
+        <h4 class="fw-bold mb-4" style="color: var(--azul-prefeitura);">VEJA O STATUS DA CIDADE</h4>
+        <div class="card bg-primary text-white border-0 shadow-sm p-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x me-3"></i>
+                <div>
+                    <h5 class="mb-1">Hoje é {{ dia_atual }}</h5>
+                    <p class="mb-0">A coleta de lixo está operando normalmente em todos os bairros de Guaxupé.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
