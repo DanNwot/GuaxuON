@@ -141,16 +141,20 @@
                             <i class="fas fa-home me-1"></i> Início
                         </a>
                     </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link px-3" href="{% url 'coleta_list' %}">
                             <i class="fas fa-calendar-alt me-1"></i> Horários de Coleta
                         </a>
                     </li>
+                    
+                    {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link px-3" href="/admin/" target="_blank">
                             <i class="fas fa-user-shield me-1"></i> Admin
                         </a>
                     </li>
+                    {% endif %}
                     
                     <li class="nav-item user-menu-container" id="userMenuContainer">
                         <button class="nav-link px-3 nav-link-user" onclick="toggleUserMenu(event)" title="Opções do Usuário">

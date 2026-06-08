@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
-# --- MODELOS BASE (MANTIDOS E CORRIGIDOS) ---
+# --- MODELOS BASE ---
 
 class Bairro(models.Model):
     nome = models.CharField(max_length=100)
@@ -103,3 +104,136 @@ class EmpresaParceira(models.Model):
 
     def __str__(self):
         return self.nome_fantasia
+
+
+# --- MÓDULO INTEGRADO DE OUVIDORIA MUNICIPAL ---
+
+class Manifestacao(models.Model):
+    TIPO_CHOICES = [
+        ('RECLAMACAO', 'Reclamação'),
+        ('DENUNCIA', 'Denúncia'),
+        ('SUGESTAO', 'Sugestão'),
+        ('ELOGIO', 'Elogio'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('PENDENTE', 'Pendente de Análise'),
+        ('EM_ANDAMENTO', 'Em Andamento'),
+        ('RESOLVIDO', 'Resolvido'),
+    ]
+
+    # Gera um protocolo único automaticamente (Ex: 4A2B7C8D)
+    protocolo = models.CharField(max_length=8, unique=True, editable=False)
+    tipo = models.CharField(max_length=15, choices=TIPO_CHOICES, default='RECLAMACAO')
+    assunto = models.CharField(max_length=100)
+    descricao = models.TextField(verbose_name="Descrição do Fato")
+    
+    # ✨ Vincula o ticket ao usuário criador
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cidadão Autor")
+
+    # Integrado diretamente com a sua tabela de Bairros oficial
+    bairro = models.ForeignKey(Bairro, on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Bairro Ocorrido")
+    
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='PENDENTE')
+    resposta_admin = models.TextField(blank=True, null=True, verbose_name="Resposta da Ouvidoria")
+
+    def save(self, *args, **kwargs):
+        if not self.protocolo:
+            self.protocolo = str(uuid.uuid4())[:8].upper()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} - Prot: {self.protocolo}"
+
+
+# --- MÓDULO INTEGRADO DE ARRECADAÇÃO E IPTU 2026 ---
+
+class Imovel(models.Model):
+    """Representa um imóvel cadastrado no município de Guaxupé e região"""
+    inscricao_imobiliaria = models.CharField(max_length=20, unique=True, verbose_name="Inscrição Imobiliária (Código)")
+    proprietario = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="Proprietário Cadastrado")
+    cpf_cnpj = models.CharField(max_length=18, verbose_name="CPF/CNPJ do Titular")
+    endereco = models.CharField(max_length=255, verbose_name="Endereço do Imóvel")
+    bairro = models.ForeignKey(Bairro, on_delete=models.PROTECT, verbose_name="Bairro")
+    valor_venal = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Valor Venal (R$)")
+
+    def __str__(self):
+        return f"Insc: {self.inscricao_imobiliaria} - {self.endereco}"
+
+
+class IPTU2026(models.Model):
+    """Guias de pagamento e parcelas do IPTU de cada imóvel"""
+    FORMA_PAGAMENTO = [
+        ('COTA_UNICA', 'Cota Única (Com Desconto)'),
+        ('PARCELA', 'Parcela Mensal'),
+    ]
+    
+    STATUS_PAGAMENTO = [
+        ('ABERTO', 'Aberto / Aguardando'),
+        ('PAGO', 'Pago / Compensado'),
+        ('VENCIDO', 'Vencido'),
+    ]
+
+    imovel = models.ForeignKey(Imovel, on_delete=models.CASCADE, related_name='debitos')
+    exercicio = models.IntegerField(default=2026)
+    parcela_numero = models.IntegerField(help_text="0 para Cota Única, 1 a 10 para parcelas normais")
+    tipo_cobranca = models.CharField(max_length=15, choices=FORMA_PAGAMENTO, default='PARCELA')
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    data_vencimento = models.DateField()
+    status = models.CharField(max_length=15, choices=STATUS_PAGAMENTO, default='ABERTO')
+    linha_digitavel = models.CharField(max_length=50, blank=True, null=True, verbose_name="Linha Digitável do Boleto")
+    codigo_pix = models.TextField(blank=True, null=True, verbose_name="Copia e Cola PIX da Prefeitura")
+
+    def __str__(self):
+        return f"{self.imovel.inscricao_imobiliaria} - 2026/{self.parcela_numero} ({self.status})"
+
+
+# --- MÓDULO DE AGENDAMENTOS ESPECIAIS E LOGÍSTICA ---
+
+class AgendamentoCataTreco(models.Model):
+    """Solicitação de recolhimento de grandes volumes (sofás, podas, eletrodomésticos)"""
+    STATUS_AGENDAMENTO = [
+        ('AGUARDANDO', 'Aguardando Aprovação'),
+        ('AGENDADO', 'Coleta Agendada'),
+        ('RECOLHIDO', 'Material Recolhido'),
+        ('CANCELADO', 'Cancelado'),
+    ]
+
+    cidadao = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Cidadão Solicitante")
+    bairro = models.ForeignKey(Bairro, on_delete=models.PROTECT, verbose_name="Bairro de Retirada")
+    endereco_completo = models.CharField(max_length=255, verbose_name="Endereço de Recolhimento")
+    descricao_itens = models.TextField(help_text="Ex: 1 sofá velho e 1 geladeira quebrada")
+    data_solicitacao = models.DateTimeField(auto_now_add=True)
+    data_agendada = models.DateField(null=True, blank=True, verbose_name="Data Marcada para Recolhimento")
+    status = models.CharField(max_length=15, choices=STATUS_AGENDAMENTO, default='AGUARDANDO')
+    observacoes_prefeitura = models.TextField(blank=True, null=True, verbose_name="Notas da Zeladoria")
+
+    class Meta:
+        verbose_name = "Agendamento Cata-Treco"
+        verbose_name_plural = "Agendamentos Cata-Treco"
+
+    def __str__(self):
+        return f"Cata-Treco #{self.id} - {self.bairro.nome} ({self.status})"
+
+
+class RegistroColetaRealizada(models.Model):
+    """Histórico de passagens dos caminhões para controle interno e auditoria"""
+    agenda = models.ForeignKey(AgendaColeta, on_delete=models.CASCADE, verbose_name="Rota da Agenda")
+    data_execucao = models.DateField(verbose_name="Data da Coleta")
+    horario_registro = models.DateTimeField(auto_now_add=True, verbose_name="Hora do Registro")
+    motorista_ou_equipe = models.CharField(max_length=100, blank=True, null=True, verbose_name="Equipe/Caminhão")
+    ocorrencia_na_rota = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True, 
+        help_text="Ex: Rota concluída com atraso devido à chuva / Carro obstruindo via"
+    )
+
+    class Meta:
+        verbose_name = "Registro de Coleta Realizada"
+        verbose_name_plural = "Registros de Coletas Realizadas"
+        ordering = ['-horario_registro']
+
+    def __str__(self):
+        return f"Coleta efetuada em {self.data_execucao} - {self.agenda.bairro.nome}"

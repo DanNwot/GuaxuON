@@ -1,0 +1,76 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 p-4 rounded-4 bg-white">
+                <div class="text-center mb-4">
+                    <div class="icon-shape bg-light text-primary rounded-circle p-3 d-inline-block mb-3" style="width: 60px; height: 60px; line-height: 30px;">
+                        <i class="fas fa-file-invoice fa-lg"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-1">Certidão Negativa de Débitos</h4>
+                    <p class="text-muted small">Emita a certidão de regularidade fiscal do seu imóvel</p>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger shadow-sm rounded-3 small mb-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>{{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="docInput" class="form-label fw-bold text-secondary small">CPF ou CNPJ do Proprietário</label>
+                        <input type="text" id="docInput" name="documento" class="form-control form-control-lg" placeholder="000.000.000-00" required autocomplete="off">
+                        <div class="form-text text-muted xsmall">A certidão será emitida apenas se todas as parcelas de 2026 estiverem quitadas.</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-lg text-white fw-bold shadow-sm" style="background-color: var(--azul-prefeitura);" type="submit">
+                            <i class="fas fa-print me-2"></i>Gerar Certidão
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="{% url 'iptu_home' %}" class="text-decoration-none text-muted small">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar ao menu do IPTU
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('docInput').addEventListener('input', function (e) {
+    let value = e.target.value;
+    
+    // Filtra para garantir que trate como documento numérico se começar com número
+    if (/^\d/.test(value) || value === '') {
+        value = value.replace(/\D/g, ''); // Limpa tudo que não for número
+        
+        // Se for o padrão de CPF (até 11 números)
+        if (value.length <= 11) {
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        } 
+        // Se passar de 11 números, transforma automaticamente na máscara de CNPJ
+        else {
+            value = value.substring(0, 14); // 🛑 TRAVA RIGOROSA: Não deixa passar de 14 dígitos numéricos
+            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        }
+        e.target.value = value;
+    }
+});
+</script>
+{% endblock %}

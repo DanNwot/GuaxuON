@@ -33,6 +33,7 @@
         height: 60px;
         border-radius: 30px;
         padding-left: 30px;
+        padding-right: 120px; /* Garante que o texto não fique embaixo do botão */
         border: 1px solid #ddd;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         font-size: 1.1rem;
@@ -74,7 +75,7 @@
         min-height: 180px;
     }
 
-    .service-item:hover {
+    .service-item:hover:not(.disabled) {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0,0,0,0.08);
         border-bottom: 4px solid var(--azul-prefeitura);
@@ -88,7 +89,7 @@
         transition: color 0.3s ease;
     }
 
-    .service-item:hover .service-icon {
+    .service-item:hover:not(.disabled) .service-icon {
         color: var(--azul-prefeitura);
     }
 
@@ -128,10 +129,10 @@
 <div class="hero-section">
     <h1 class="hero-title">O QUE VOCÊ <strong>PRECISA?</strong></h1>
     
-    <div class="search-container">
-        <input type="text" class="form-control search-input" placeholder="O que você está procurando?">
-        <button class="btn-search">BUSCAR</button>
-    </div>
+    <form action="{% url 'global_search' %}" method="GET" class="search-container">
+        <input type="text" name="q" class="form-control search-input" placeholder="O que você está procurando?" required>
+        <button type="submit" class="btn-search">BUSCAR</button>
+    </form>
 
     <div class="service-grid">
         <a href="{% url 'coleta_list' %}" class="service-item shadow-sm">
@@ -141,26 +142,26 @@
             <div class="service-label">Coleta de Lixo</div>
         </a>
 
-        <div class="service-item disabled shadow-sm">
+        <a href="{% url 'iptu_home' %}" class="service-item shadow-sm">
             <div class="service-icon">
                 <i class="fas fa-file-invoice"></i>
             </div>
             <div class="service-label">IPTU 2026</div>
-        </div>
+        </a>
 
-        <div class="service-item disabled shadow-sm">
+        <a href="{% url 'ouvidoria_home' %}" class="service-item shadow-sm">
             <div class="service-icon">
                 <i class="fas fa-bullhorn"></i>
             </div>
             <div class="service-label">Ouvidoria</div>
-        </div>
+        </a>
 
-        <a href="#" class="service-item shadow-sm">
-            <div class="service-icon text-danger">
+        <div class="service-item disabled shadow-sm">
+            <div class="service-icon">
                 <i class="fas fa-hand-holding-medical"></i>
             </div>
             <div class="service-label">Saúde</div>
-        </a>
+        </div>
 
         <div class="service-item disabled shadow-sm">
             <div class="service-icon">
@@ -238,7 +239,7 @@
             </div>
 
             <div class="carousel-item" data-bs-interval="5000">
-                <img src="{% static 'app/images/07.jpg' %}" class="d-block w-100" alt="Cidade Limpa, Dever de Todos">
+                <img src="{% static 'app/images/07.jpg' %}" class="d-block w-100" alt="Cidade Clean, Dever de Todos">
                 <div class="carousel-caption d-none d-md-block text-start">
                     <h5>Cidade Limpa, Dever de Todos</h5>
                     <p>Pequenas ações diárias na separação e destinação do lixo promovem a saúde pública em toda Guaxupé.</p>

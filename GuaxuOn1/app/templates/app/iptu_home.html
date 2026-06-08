@@ -1,0 +1,33 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold display-5" style="color: var(--azul-prefeitura);">IPTU 2026</h1>
+        <p class="text-secondary">Portal de Serviços Tributários de Guaxupé e Região.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card h-100 shadow border-0 text-center p-4 rounded-4 bg-white">
+                <div class="text-primary mb-3" style="font-size: 3.5rem; color: var(--azul-prefeitura) !important;">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-3">EMISSÃO DE 2ª VIA</h4>
+                <p class="text-muted flex-grow-1">Consulte os débitos do seu imóvel, imprima boletos com código de barras ou pague via PIX Copia e Cola.</p>
+                <a href="{% url 'iptu_consulta' %}" class="btn text-white fw-bold px-4 rounded-pill mt-3" style="background-color: var(--azul-prefeitura);">ACESSAR GUIA</a>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card h-100 shadow border-0 text-center p-4 rounded-4 bg-white">
+                <div class="text-success mb-3" style="font-size: 3.5rem;">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-3">CERTIDÃO NEGATIVA (CND)</h4>
+                <p class="text-muted flex-grow-1">Emita a Certidão Negativa de Débitos do Imóvel ou do Contribuinte para comprovação de regularidade fiscal.</p>
+                <a href="{% url 'iptu_certidao' %}" class="btn btn-success fw-bold px-4 rounded-pill mt-3">EMITIR CERTIDÃO</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

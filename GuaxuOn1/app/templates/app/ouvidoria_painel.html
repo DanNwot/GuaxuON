@@ -1,0 +1,108 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-0">Painel da Ouvidoria</h2>
+            <p class="text-muted small">Gerenciamento e resposta de manifestações dos cidadãos</p>
+        </div>
+        <span class="badge bg-primary p-2">Área Restrita</span>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                <i class="fas fa-check-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow border-0 rounded-4 p-4 bg-white">
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Protocolo</th>
+                                <th>Tipo</th>
+                                <th>Assunto</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for chamado in chamados %}
+                            <tr>
+                                <td class="fw-bold text-primary">{{ chamado.protocolo }}</td>
+                                <td><span class="badge bg-secondary small">{{ chamado.get_tipo_display }}</span></td>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ chamado.assunto }}</div>
+                                    <small class="text-muted text-truncate d-inline-block" style="max-width: 300px;">{{ chamado.descricao }}</small>
+                                </td>
+                                <td class="small">{{ chamado.data_criacao|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <span class="badge {% if chamado.status == 'RESOLVIDO' %}bg-success{% elif chamado.status == 'EM_ANDAMENTO' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                        {{ chamado.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-primary fw-bold" data-bs-toggle="modal" data-bs-target="#modalResponder{{ chamado.id }}">
+                                        <i class="fas fa-reply me-1"></i> Responder
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <div class="modal fade" id="modalResponder{{ chamado.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 rounded-4">
+                                        <div class="modal-header bg-light border-0">
+                                            <h5 class="modal-title fw-bold">Responder Protocolo {{ chamado.protocolo }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="id" value="{{ chamado.id }}">
+                                            <div class="modal-body text-start">
+                                                <p class="mb-2"><strong>Relato do Cidadão:</strong></p>
+                                                <blockquote class="bg-light p-3 rounded-3 text-muted small mb-3">
+                                                    "{{ chamado.descricao }}"
+                                                </blockquote>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold small">Alterar Status</label>
+                                                    <select name="status" class="form-select">
+                                                        <option value="RECEBIDO" {% if chamado.status == 'RECEBIDO' %}selected{% endif %}>Recebido</option>
+                                                        <option value="EM_ANDAMENTO" {% if chamado.status == 'EM_ANDAMENTO' %}selected{% endif %}>Em Andamento</option>
+                                                        <option value="RESOLVIDO" {% if chamado.status == 'RESOLVIDO' %}selected{% endif %}>Resolvido / Concluído</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold small">Parecer Técnico / Resposta Oficial</label>
+                                                    <textarea name="resposta" class="form-control" rows="4" required placeholder="Digite a resposta que o cidadão verá ao consultar o protocolo...">{{ chamado.resposta_limpa }}</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0 bg-light">
+                                                <button type="button" class="btn btn-light fw-bold" data-bs-dismiss="modal">Fechar</button>
+                                                <button type="submit" class="btn btn-primary fw-bold">Salvar Resposta</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">Nenhuma manifestação registrada até o momento.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

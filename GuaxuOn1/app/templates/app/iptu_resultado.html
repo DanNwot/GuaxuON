@@ -1,0 +1,27 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="card shadow border-0 rounded-4 p-5 max-width-600 mx-auto bg-white border-top border-5 {% if regular %}border-success{% else %}border-danger{% endif %}">
+        
+        {% if regular %}
+            <div class="text-success mb-3" style="font-size: 4rem;"><i class="fas fa-shield-alt"></i></div>
+            <h3 class="fw-bold text-success">CERTIDÃO NEGATIVA DE DÉBITOS</h3>
+            <p class="text-dark mt-3 text-start">Certificamos, para os devidos fins, que revendo os registros de cadastro da Receita e Arrecadação Municipal, <strong>NÃO CONSTAM</strong> débitos pendentes de tributos municipais para o documento informado.</p>
+            <div class="alert alert-success mt-4 text-start small">
+                <strong>Status:</strong> CONTRIBUINTE REGULAR <br>
+                <strong>Data de Emissão:</strong> {{ data_emissao|date:"d/m/Y H:i:s" }} <br>
+                <strong>Código de Autenticidade:</strong> GUX-{{ data_emissao|date:"U" }}
+            </div>
+        {% else %}
+            <div class="text-danger mb-3" style="font-size: 4rem;"><i class="fas fa-times-circle"></i></div>
+            <h3 class="fw-bold text-danger">CERTIDÃO POSITIVA DE DÉBITOS</h3>
+            <p class="text-dark mt-3 text-start">Informamos que <strong>CONSTAM pendências financeiras ou cadastrais</strong> em aberto junto ao setor de arrecadação do município. Emitida em {{ data_emissao|date:"d/m/Y" }}.</p>
+            <p class="text-muted small text-start">Regularize seus débitos na aba de Segunda Via antes de solicitar uma nova certidão fiscal.</p>
+        {% endif %}
+        
+        <hr class="my-4">
+        <a href="{% url 'iptu_home' %}" class="btn btn-light fw-bold px-4 rounded-pill">Voltar para o Menu</a>
+        <button class="btn btn-outline-dark fw-bold px-4 rounded-pill" onclick="window.print()"><i class="fas fa-print"></i> Imprimir</button>
+    </div>
+</div>
+{% endblock %}

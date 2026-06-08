@@ -1,0 +1,114 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show rounded-4 text-center mb-4 shadow-sm border-0 bg-success text-white" role="alert">
+                        <div class="p-2">
+                            <i class="fas fa-check-circle fa-2x mb-2 d-block"></i>
+                            <span class="fw-bold">{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card shadow border-0 rounded-4 p-4 bg-white mb-4">
+                <h3 class="fw-bold text-dark mb-4 text-center">
+                    <i class="fas fa-search me-2 text-primary"></i>Consultar Protocolo
+                </h3>
+                
+                <form method="GET" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="protocolo" class="form-control" placeholder="Ex: GUX-123456" value="{{ protocolo_busca }}" required>
+                        <button type="submit" class="btn btn-primary fw-bold">Buscar</button>
+                    </div>
+                </form>
+
+                {% if erro %}
+                    <div class="alert alert-danger rounded-3 mb-0 text-center">{{ erro }}</div>
+                {% endif %}
+
+                {% if manifestacao %}
+                    <div class="border-top pt-3 mt-2">
+                        <h5 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-1"></i> Resultado da Busca</h5>
+                        <div class="bg-light p-3 rounded-4 shadow-sm">
+                            <p class="mb-2"><strong>Protocolo:</strong> <span class="badge bg-dark font-monospace px-2 py-1 fs-6">{{ manifestacao.protocolo }}</span></p>
+                            <p class="mb-2"><strong>Assunto:</strong> {{ manifestacao.assunto }}</p>
+                            <p class="mb-2"><strong>Status:</strong> 
+                                <span class="badge {% if manifestacao.status == 'RESOLVIDO' %}bg-success{% elif manifestacao.status == 'EM_ANDAMENTO' %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                    {{ manifestacao.get_status_display }}
+                                </span>
+                            </p>
+                            <p class="mb-2"><strong>Relato:</strong> {{ manifestacao.descricao }}</p>
+                            
+                            {# ✨ CORREÇÃO AQUI: Passamos a usar apenas a resposta_limpa injetada pela view #}
+                            {% if manifestacao.resposta_limpa %}
+                                <div class="bg-white p-3 rounded-3 mt-3 border-start border-primary border-4 shadow-sm">
+                                    <strong class="text-primary"><i class="fas fa-reply me-1"></i> Resposta da Prefeitura:</strong>
+                                    <p class="mb-0 text-muted mt-1">{{ manifestacao.resposta_limpa }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="card shadow border-0 rounded-4 p-4 bg-white">
+                <h4 class="fw-bold text-dark mb-3">
+                    <i class="fas fa-history me-2 text-secondary"></i>Histórico de Manifestações
+                </h4>
+                <p class="text-muted small mb-4">Veja abaixo todos os chamados registrados no sistema:</p>
+
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Protocolo</th>
+                                <th>Assunto</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for m in todas_manifestacoes %}
+                            <tr>
+                                <td class="fw-bold">
+                                    <a href="{% url 'ouvidoria_consulta' %}?protocolo={{ m.protocolo }}" class="text-decoration-none text-primary">
+                                        {{ m.protocolo }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark small">{{ m.assunto }}</div>
+                                    <small class="text-muted text-truncate d-inline-block" style="max-width: 220px;">{{ m.descricao }}</small>
+                                </td>
+                                <td class="small text-muted">{{ m.data_criacao|date:"d/m/Y" }}</td>
+                                <td>
+                                    <span class="badge {% if m.status == 'RESOLVIDO' %}bg-success{% elif m.status == 'EM_ANDAMENTO' %}bg-warning text-dark{% else %}bg-danger{% endif %} small">
+                                        {{ m.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">Nenhuma manifestação encontrada.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'ouvidoria_home' %}" class="text-decoration-none text-muted small">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar para o menu da Ouvidoria
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

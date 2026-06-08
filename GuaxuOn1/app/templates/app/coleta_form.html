@@ -1,0 +1,57 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 rounded-4 p-4">
+                <h3 class="fw-bold text-primary mb-4 text-center">{{ titulo }}</h3>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Bairro</label>
+                        <select name="bairro" class="form-select" required>
+                            <option value="">Selecione o Bairro...</option>
+                            {% for b in bairros %}
+                                <option value="{{ b.id }}" {% if agenda.bairro.id == b.id %}selected{% endif %}>{{ b.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tipo de Resíduo</label>
+                        <select name="tipo" class="form-select" required>
+                            <option value="">Selecione o tipo...</option>
+                            {% for t in tipos %}
+                                <option value="{{ t.id }}" {% if agenda.tipo.id == t.id %}selected{% endif %}>{{ t.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Dia da Semana</label>
+                        <select name="dia_semana" class="form-select" required>
+                            <option value="">Selecione o dia...</option>
+                            {% for dia in dias %}
+                                <option value="{{ dia }}" {% if agenda.dia_semana == dia %}selected{% endif %}>{{ dia }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Horário</label>
+                        <input type="text" name="horario" class="form-control" placeholder="Ex: 08:30" value="{{ agenda.horario }}" required>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'coleta_list' %}" class="btn btn-light w-50 fw-bold">Cancelar</a>
+                        <button type="submit" class="btn btn-primary w-50 fw-bold">Salvar Horário</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

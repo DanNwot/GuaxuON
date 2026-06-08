@@ -1,0 +1,58 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0 p-4 rounded-4 bg-white mb-4">
+                <h4 class="fw-bold text-dark mb-3"><i class="fas fa-search text-primary me-2"></i>Acompanhar Manifestação</h4>
+                <form method="GET">
+                    <div class="input-group">
+                        <input type="text" name="protocolo" class="form-control" placeholder="Informe o número do seu protocolo (Ex: 202612345)" value="{{ protocolo }}" required>
+                        <button class="btn text-white fw-bold" style="background-color: var(--azul-prefeitura);" type="submit">Buscar</button>
+                    </div>
+                </form>
+            </div>
+
+            {% if erro %}
+                <div class="alert alert-warning shadow-sm rounded-3"><i class="fas fa-exclamation-circle me-2"></i>{{ erro }}</div>
+            {% endif %}
+
+            {% if manifestacao %}
+                <div class="card shadow border-0 rounded-4 p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                        <div>
+                            <span class="badge bg-secondary mb-1">{{ manifestacao.get_tipo_display }}</span>
+                            <h5 class="fw-bold text-dark mb-0">Protocolo: {{ manifestacao.protocolo }}</h5>
+                        </div>
+                        <span class="badge {% if manifestacao.status == 'RESOLVIDO' %}bg-success{% elif manifestacao.status == 'EM_ANDAMENTO' %}bg-warning text-dark{% else %}bg-danger{% endif %} p-2">
+                            {{ manifestacao.get_status_display }}
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong class="text-secondary small d-block">Assunto:</strong>
+                        <span class="text-dark fw-bold">{{ manifestacao.assunto }}</span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong class="text-secondary small d-block">Sua Descrição:</strong>
+                        <p class="text-muted bg-light p-3 rounded-3 mb-0">{{ manifestacao.descricao }}</p>
+                    </div>
+
+                    {% if manifestacao.resposta_ouvidoria %}
+                        <div class="mt-4 p-3 bg-light border-start border-primary border-4 rounded-end-3">
+                            <strong class="text-primary small d-block mb-1"><i class="fas fa-reply me-1"></i> Resposta Oficial da Ouvidoria:</strong>
+                            <p class="text-dark mb-1 fw-medium">{{ manifestacao.resposta_ouvidoria }}</p>
+                            <small class="text-muted d-block text-end">Respondido em: {{ manifestacao.data_resposta|date:"d/m/Y às H:i" }}</small>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mt-4 rounded-3 small mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Esta manifestação está sendo analisada pelo setor responsável e receberá uma resposta em breve.
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

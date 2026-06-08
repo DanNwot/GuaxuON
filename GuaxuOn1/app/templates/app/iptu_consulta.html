@@ -1,0 +1,114 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0 p-4 rounded-4 bg-white mb-4">
+                <h4 class="fw-bold text-dark mb-3"><i class="fas fa-search text-primary me-2"></i>Consultar Carnê IPTU 2026</h4>
+                <form method="GET">
+                    <div class="input-group">
+                        <input type="text" id="docInput" name="busca" class="form-control" placeholder="Informe o CPF, CNPJ ou Código de Inscrição Municipal" value="{{ busca }}" required>
+                        <button class="btn text-white fw-bold" style="background-color: var(--azul-prefeitura);" type="submit">Pesquisar</button>
+                    </div>
+                </form>
+            </div>
+
+            {% if erro %}
+                <div class="alert alert-warning shadow-sm rounded-3"><i class="fas fa-exclamation-circle me-2"></i>{{ erro }}</div>
+            {% endif %}
+
+            {% if imoveis %}
+                {% for imovel in imoveis %}
+                    <div class="card shadow border-0 rounded-4 p-4 bg-white mb-4">
+                        <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-3">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1"><i class="fas fa-home text-secondary me-2"></i>Inscrição: {{ imovel.inscricao_imobiliaria }}</h5>
+                                
+                                <p class="text-muted mb-0 small"><strong>Proprietário:</strong> {{ imovel.proprietario.get_full_name|default:imovel.proprietario.username }}</p>
+                                
+                                <p class="text-muted mb-0 small"><strong>CPF/CNPJ do Titular:</strong> <span class="mascara-tabela">{{ imovel.cpf_cnpj }}</span></p>
+                                
+                                <p class="text-muted mb-0 small"><strong>Endereço:</strong> {{ imovel.endereco }} - Bairro: {{ imovel.bairro.nome }}</p>
+                            </div>
+                            <span class="badge bg-light text-dark border p-2">Exercício 2026</span>
+                        </div>
+
+                        <h6 class="fw-bold text-dark mb-3">Detalhamento das Parcelas:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Cota/Parc.</th>
+                                        <th>Vencimento</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Guia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for debito in imovel.debitos.all %}
+                                    <tr>
+                                        <td class="fw-bold">{{ debito.get_tipo_cobranca_display }} {% if debito.parcela_numero > 0 %}{{ debito.parcela_numero }}ª{% endif %}</td>
+                                        <td>{{ debito.data_vencimento|date:"d/m/Y" }}</td>
+                                        <td class="fw-bold text-dark">R$ {{ debito.valor }}</td>
+                                        <td>
+                                            <span class="badge {% if debito.status == 'PAGO' %}bg-success{% elif debito.status == 'VENCIDO' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                                                {{ debito.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            {% if debito.status != 'PAGO' %}
+                                                <button class="btn btn-sm btn-outline-primary" onclick="alert('Código PIX Copia e Cola: \n\n{{ debito.codigo_pix|default:'PIX_PREFEITURA_GUAXUPE_SIMULADO' }}')">
+                                                    <i class="fas fa-qrcode"></i> Pagar
+                                                </button>
+                                            {% else %}
+                                                <span class="text-success small"><i class="fas fa-check-double"></i> Quitado</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+// 1. CONTROLADOR DO CAMPO DE BUSCA (MÁSCARA E TRAVA)
+document.getElementById('docInput').addEventListener('input', function (e) {
+    let value = e.target.value;
+    
+    if (/^\d/.test(value) || value === '') {
+        value = value.replace(/\D/g, ''); 
+        
+        if (value.length <= 11) {
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        } else {
+            value = value.substring(0, 14); 
+            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        }
+        e.target.value = value;
+    }
+});
+
+// 2. FORMATADOR DOS DADOS EXIBIDOS NA TABELA DE RESULTADOS
+document.querySelectorAll('.mascara-tabela').forEach(function(el) {
+    let num = el.textContent.replace(/\D/g, '');
+    if (num.length === 11) {
+        el.textContent = num.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    } else if (num.length === 14) {
+        el.textContent = num.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+    }
+});
+</script>
+{% endblock %}

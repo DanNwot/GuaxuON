@@ -1,0 +1,49 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-primary display-5" style="color: var(--azul-prefeitura) !important;">OUVIDORDIA MUNICIPAL</h1>
+        <p class="text-secondary">O canal direto entre você e a administração da nossa cidade.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0 text-center p-4 rounded-4 bg-white">
+                <div class="text-primary mb-3" style="font-size: 3.5rem;">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-3">NOVA MANIFESTAÇÃO</h4>
+                <p class="text-muted flex-grow-1">Encaminhe elogios, sugestões, solicitações, reclamações ou denúncias à prefeitura.</p>
+                <a href="{% url 'ouvidoria_nova' %}" class="btn text-white fw-bold px-4 rounded-pill mt-3" style="background-color: var(--azul-prefeitura);">ACESSAR</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0 text-center p-4 rounded-4 bg-white">
+                <div class="text-primary mb-3" style="font-size: 3.5rem;">
+                    <i class="fas fa-search-location"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-3">CONSULTAR MANIFESTAÇÃO</h4>
+                <p class="text-muted flex-grow-1">Verifique o andamento ou a resposta final de uma manifestação registrada.</p>
+                <a href="{% url 'ouvidoria_consulta' %}" class="btn text-white fw-bold px-4 rounded-pill mt-3" style="background-color: var(--azul-prefeitura);">ACESSAR</a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow border-0 text-center p-4 rounded-4 bg-white {% if not user.is_staff %}opacity-75{% endif %}">
+                <div class="text-primary mb-3" style="font-size: 3.5rem;">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-3">PAINEL DE OUVIDORIA</h4>
+                <p class="text-muted flex-grow-1">Espaço administrativo para triagem, respostas e relatórios operacionais internos.</p>
+                
+                {% if user.is_authenticated and user.is_staff %}
+                    <a href="{% url 'ouvidoria_painel' %}" class="btn btn-warning text-dark fw-bold px-4 rounded-pill mt-3">ACESSAR PAINEL</a>
+                {% else %}
+                    <button class="btn btn-secondary fw-bold px-4 rounded-pill mt-3 disabled" title="Acesso restrito para administradores">RESTRITO</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

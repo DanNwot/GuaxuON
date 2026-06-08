@@ -1,0 +1,26 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card shadow border-0 rounded-4 p-5 bg-white">
+                <div class="text-success display-1 mb-3">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="fw-bold text-dark mb-2">Manifestação Enviada!</h2>
+                <p class="text-muted">Guarde o seu número de protocolo para acompanhar o andamento.</p>
+                
+                <div class="bg-light p-3 rounded-3 my-4">
+                    <span class="text-muted small d-block text-uppercase fw-bold">Número do Protocolo</span>
+                    <span class="fs-3 fw-bold text-primary tracking-wide">{{ protocolo }}</span>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="{% url 'ouvidoria_home' %}" class="btn btn-light fw-bold px-4">Voltar ao Menu</a>
+                    <a href="{% url 'ouvidoria_consulta' %}?protocolo={{ protocolo }}" class="btn btn-primary fw-bold px-4">Acompanhar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow border-0 rounded-4 p-4 bg-white">
+                <h3 class="fw-bold text-dark mb-4 text-center"><i class="fas fa-edit me-2 text-primary"></i>Registrar Ocorrência</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tipo de Manifestação</label>
+                        <select name="tipo" class="form-select" required>
+                            <option value="RECLAMACAO">Reclamação</option>
+                            <option value="DENUNCIA">Denúncia</option>
+                            <option value="SUGESTAO">Sugestão</option>
+                            <option value="ELOGIO">Elogio</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Assunto Resumido</label>
+                        <input type="text" name="assunto" class="form-control" placeholder="Ex: Lâmpada queimada na rua" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Bairro do Ocorrido</label>
+                        <input type="text" name="bairro" class="form-control" placeholder="Ex: Centro">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Relato Detalhado</label>
+                        <textarea name="descricao" class="form-control" rows="5" placeholder="Descreva os fatos com o máximo de detalhes possível..." required></textarea>
+                    </div>
+                    <div class="d-flex gap-2 pt-2">
+                        <a href="{% url 'ouvidoria_home' %}" class="btn btn-light w-50 fw-bold">Voltar</a>
+                        <button type="submit" class="btn btn-primary w-50 fw-bold">Enviar Relato</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
